@@ -1,0 +1,8 @@
+---
+- name: Manage Corporate Asset Library
+  hosts: cal_servers
+  vars_files:
+    - group_vars/cal_servers.yml
+  tasks:
+    - include_role:
+        name: manage_cal
