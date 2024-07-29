@@ -1,3 +1,12 @@
 cal_url: "http://cal.corporateinventory.bce.ca"
 username: "your_username"
 password: "your_password"
+app_name: "Sample Application"
+app_description: "Description of the Sample Application"
+app_owner: "owner@example.com"
+app_id: "12345"
+servers:
+  - hostname: "server1"
+    ip: "192.168.1.1"
+  - hostname: "server2"
+    ip: "192.168.1.2"
