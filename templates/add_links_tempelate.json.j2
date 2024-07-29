@@ -1,0 +1,11 @@
+{
+  "application_id": "{{ app_id }}",
+  "servers": [
+    {% for server in servers %}
+    {
+      "hostname": "{{ server.hostname }}",
+      "ip": "{{ server.ip }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
