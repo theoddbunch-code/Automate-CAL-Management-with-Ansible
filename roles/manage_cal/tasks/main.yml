@@ -1,0 +1,52 @@
+---
+- name: Ensure the required Python packages are installed
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - requests
+    - openpyxl
+
+- name: Search CAL for Existing Applications
+  uri:
+    url: "{{ cal_url }}/api/applications"
+    method: GET
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: yes
+    return_content: yes
+  register: cal_applications
+
+- name: Check if Application Exists
+  set_fact:
+    app_exists: "{{ cal_applications.json.results | selectattr('name', 'equalto', app_name) | list | length > 0 }}"
+
+- name: Onboard Application if Not Exists
+  uri:
+    url: "{{ cal_url }}/api/applications"
+    method: POST
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "application/json"
+    body: "{{ lookup('file', 'templates/add_application.json') }}"
+    body_format: json
+  when: not app_exists
+
+- name: Manage Application Links
+  template:
+    src: add_links_template.json.j2
+    dest: /tmp/add_links.json
+
+- name: Submit Application Links
+  uri:
+    url: "{{ cal_url }}/api/application_links"
+    method: POST
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "application/json"
+    body: "{{ lookup('file', '/tmp/add_links.json') }}"
+    body_format: json
